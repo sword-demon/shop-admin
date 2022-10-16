@@ -71,7 +71,9 @@ import { useRouter } from "vue-router";
 import { login, getInfo } from "~/api/manager";
 import { setToken } from "~/composables/auth";
 import { toast } from "~/composables/util";
+import { useStore } from "vuex";
 
+const store = useStore();
 const router = useRouter();
 
 // do not use same name with ref
@@ -113,6 +115,8 @@ const onSubmit = () => {
                 // 获取用户信息
                 getInfo().then((resp) => {
                     console.log(resp);
+                    // 使用 vuex 存储用户信息
+                    store.commit("SET_USERINFO", resp);
                 });
                 // 跳转到后台首页
                 router.push("/");
