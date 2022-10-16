@@ -6,3 +6,8 @@ export function login(username, password) {
         password,
     })
 }
+
+// 获取用户相关信息
+export function getInfo() {
+    return axios.post('/admin/getinfo')
+}

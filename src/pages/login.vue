@@ -51,6 +51,7 @@
                 </el-form-item>
                 <el-form-item>
                     <el-button
+                        :loading="loading"
                         round
                         color="#626aef"
                         class="w-[250px]"
@@ -68,7 +69,7 @@
 import { ref, reactive } from "vue";
 import { ElNotification } from "element-plus";
 import { useRouter } from "vue-router";
-import { login } from "~/api/manager";
+import { login, getInfo } from "~/api/manager";
 import { useCookies } from "@vueuse/integrations/useCookies";
 
 const router = useRouter();
@@ -92,17 +93,19 @@ const rules = {
 
 // 让formRef变成响应式
 const formRef = ref(null);
+const loading = ref(false);
 
 const onSubmit = () => {
     formRef.value.validate((valid) => {
         if (!valid) {
             return false;
         }
+        loading.value = true;
         // console.log("验证通过");
         // 返回的是一个 promise
         login(form.username, form.password)
             .then((res) => {
-                console.log(res.data.data);
+                console.log(res);
                 ElNotification({
                     message: "登录成功",
                     type: "success",
@@ -111,17 +114,17 @@ const onSubmit = () => {
                 // 提示成功
                 // 存储token和用户相关信息
                 const cookie = useCookies();
-                cookie.set("admin-token", res.data.data.token);
+                cookie.set("admin-token", res.token);
+                // 获取用户信息
+                getInfo().then((resp) => {
+                    console.log(resp);
+                });
                 // 跳转到后台首页
                 router.push("/");
             })
-            .catch((err) => {
-                // console.log(err.response.data);
-                ElNotification({
-                    message: err.response.data.msg || "请求失败",
-                    type: "error",
-                    duration: 3000, // 3秒钟
-                });
+            .finally(() => {
+                // 请求结束之后设置回false
+                loading.value = false;
             });
     });
 };
