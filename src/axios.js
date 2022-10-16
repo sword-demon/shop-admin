@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { ElNotification } from 'element-plus'
-import { useCookies } from '@vueuse/integrations/useCookies'
+import { getToken } from '~/composables/auth'
+import { toast } from '~/composables/util.js'
 
 // 创建自定义实例
 const service = axios.create({
@@ -12,8 +12,7 @@ const service = axios.create({
 service.interceptors.request.use(
     function (config) {
         // wang header 里自动添加 header
-        const cookie = useCookies()
-        const token = cookie.get('admin-token')
+        const token = getToken()
         // 判断一下
         if (token) {
             config.headers['token'] = token
@@ -34,11 +33,7 @@ service.interceptors.response.use(
     },
     function (error) {
         // 对响应错误做点什么
-        ElNotification({
-            message: error.response.data.msg || '请求失败',
-            type: 'error',
-            duration: 3000, // 3秒钟
-        })
+        toast(error.response.data.msg || '请求失败', 'error')
         return Promise.reject(error)
     }
 )
