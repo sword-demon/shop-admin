@@ -1,4 +1,5 @@
-import { ElNotification, ElMessageBox, ElMessage } from 'element-plus'
+import { ElNotification, ElMessageBox } from 'element-plus'
+import nProgress from 'nprogress'
 
 export function showModel(content = '提示内容', type = 'warning', title = '') {
     return ElMessageBox.confirm(content, title, {
@@ -16,4 +17,14 @@ export function toast(message, type = 'success', dangerouslyUseHTMLString = fals
         duration: 3000, // 3秒钟
         dangerouslyUseHTMLString,
     })
+}
+
+// 显示全局loading
+export function showFullLoading() {
+    nProgress.start()
+}
+
+// 隐藏全局loading
+export function hideFullLoading() {
+    nProgress.done()
 }

@@ -2,11 +2,14 @@
 
 import router from './router'
 import { getToken } from '~/composables/auth'
-import { toast } from '~/composables/util'
+import { toast, showFullLoading, hideFullLoading } from '~/composables/util'
 import store from './store'
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
+    // 显示loading
+    showFullLoading()
+
     // console.log('全局前置守卫')
     const token = getToken()
     // 没有登录强制跳转回登录页
@@ -25,6 +28,12 @@ router.beforeEach(async (to, from, next) => {
         // 异步
         await store.dispatch('getAdminUserInfo')
     }
-    // return false
+    // 设置页面标题
+    console.log(to.meta.title) // 拿到标题
+    let title = (to.meta.title ? to.meta.title : '') + '-无解的管理后台'
+    document.title = title
     next() // 放行
 })
+
+// 全局后置守卫
+router.afterEach((to, from) => hideFullLoading())
