@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { getToken } from '~/composables/auth'
 import { toast } from '~/composables/util.js'
+import store from './store'
 
 // 创建自定义实例
 const service = axios.create({
@@ -32,8 +33,13 @@ service.interceptors.response.use(
         return response.data.data
     },
     function (error) {
+        const msg = error.response.data.msg || '请求失败'
+        // todo 这里感觉使用文字来判断不可行，后期可以进行优化
+        if (msg == '非法token，请先登录！') {
+            store.dispatch('logout').finally(() => location.reload())
+        }
         // 对响应错误做点什么
-        toast(error.response.data.msg || '请求失败', 'error')
+        toast(msg, 'error')
         return Promise.reject(error)
     }
 )
