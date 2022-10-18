@@ -6,7 +6,8 @@ import store from './store'
 // 创建自定义实例
 const service = axios.create({
     // 使用 server.proxy 之后，使用vite配置的代理地址
-    baseURL: '/api',
+    // 使用环境变量里的地址
+    baseURL: import.meta.env.VITE_APP_BASE_API,
 })
 
 // 添加请求拦截器
