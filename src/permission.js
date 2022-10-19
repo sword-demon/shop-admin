@@ -1,6 +1,6 @@
 // 处理权限相关的内容
 
-import router from './router'
+import { router, addRoutes } from './router'
 import { getToken } from '~/composables/auth'
 import { toast, showFullLoading, hideFullLoading } from '~/composables/util'
 import store from './store'
@@ -23,16 +23,20 @@ router.beforeEach(async (to, from, next) => {
         // 从哪里来就从哪里去
         return next({ path: from.path ? from.path : '/' })
     }
+    let hasNewRoutes = false
     // 如果用户登录了就自动获取用户信息，并存储在vuex中
     if (token) {
-        // 异步
-        await store.dispatch('getAdminUserInfo')
+        // 异步 resolve(res) 的res 进行解构出菜单
+        let { menus } = await store.dispatch('getAdminUserInfo')
+        // 动态添加路由
+        hasNewRoutes = addRoutes(menus)
     }
     // 设置页面标题
-    console.log(to.meta.title) // 拿到标题
+    // console.log(to.meta.title) // 拿到标题
     let title = (to.meta.title ? to.meta.title : '') + '-无解的管理后台'
     document.title = title
-    next() // 放行
+    // 如果有新的路由走指定的 否则直接 next()
+    hasNewRoutes ? next(to.fullPath) : next() // 放行
 })
 
 // 全局后置守卫
