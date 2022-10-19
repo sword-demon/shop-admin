@@ -9,6 +9,10 @@ const store = createStore({
 
             // 侧边宽度
             asideWidth: '250px',
+            // 菜单数据
+            menus: [],
+            // 权限菜单相关数据
+            ruleNames: [],
         }
     },
     mutations: {
@@ -20,6 +24,12 @@ const store = createStore({
         handleAsideWidth(state) {
             state.asideWidth = state.asideWidth === '250px' ? '64px' : '250px'
         },
+        SET_MENUS(state, menus) {
+            state.menus = menus
+        },
+        SET_RULENAMES(state, ruleNames) {
+            state.ruleNames = ruleNames
+        },
     },
     // 异步
     actions: {
@@ -29,6 +39,8 @@ const store = createStore({
                 getInfo()
                     .then(res => {
                         commit('SET_USERINFO', res)
+                        commit('SET_MENUS', res.menus)
+                        commit('SET_RULENAMES', res.ruleNames)
                         resolve(res)
                     })
                     .catch(err => reject(err))

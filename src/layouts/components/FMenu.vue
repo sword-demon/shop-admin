@@ -3,7 +3,7 @@
         <el-menu
             :collapse="isCollapse"
             @select="handleSelect"
-            default-active="2"
+            :default-active="defaultActive"
             class="border-0"
             :collapse-transition="false"
             unique-opened="true"
@@ -42,38 +42,19 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 const router = useRouter();
 const store = useStore();
+const route = useRoute();
+
+// 当前路由路径 默认选中
+const defaultActive = ref(route.path);
 
 // 是否折叠
 const isCollapse = computed(() => !(store.state.asideWidth == "250px"));
-const asideMenus = [
-    {
-        name: "后台面板",
-        icon: "help",
-        child: [
-            {
-                name: "主控台",
-                frontpath: "/",
-                icon: "home-filled",
-            },
-        ],
-    },
-    {
-        name: "商城管理",
-        icon: "shopping-bag",
-        child: [
-            {
-                name: "商品管理",
-                frontpath: "/goods/list",
-                icon: "shopping-cart-full",
-            },
-        ],
-    },
-];
+const asideMenus = computed(() => store.state.menus);
 
 const handleSelect = (e) => {
     router.push(e);
@@ -89,5 +70,8 @@ const handleSelect = (e) => {
     overflow-y: auto;
     overflow-x: hidden;
     @apply shadow-md fixed bg-light-50;
+}
+.f-menu::-webkit-scrollbar {
+    width: 0px;
 }
 </style>
