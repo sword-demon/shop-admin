@@ -6,7 +6,10 @@
             无解的游戏
         </span>
         <!-- 收缩图标 -->
-        <el-icon class="icon-btn"><Fold /></el-icon>
+        <el-icon @click="$store.commit('handleAsideWidth')" class="icon-btn"
+            ><Fold v-if="$store.state.asideWidth == '250px'" />
+            <Expand v-else />
+        </el-icon>
         <!-- 刷新图标 -->
         <el-tooltip effect="dark" content="刷新" placement="bottom">
             <el-icon class="icon-btn" @click="handleRefresh"
