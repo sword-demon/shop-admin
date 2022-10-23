@@ -6,9 +6,11 @@
             class="flex-1"
             @tab-remove="removeTab"
             style="min-width: 100px"
+            @tab-change="changeTab"
         >
+            <!-- 如果是首页不显示关闭按钮 -->
             <el-tab-pane
-                v-for="item in taList"
+                v-for="item in tabList"
                 :key="item.path"
                 :label="item.title"
                 :name="item.path"
@@ -17,7 +19,7 @@
             </el-tab-pane>
         </el-tabs>
         <span class="tag-btn">
-            <el-dropdown>
+            <el-dropdown @command="handleClose">
                 <span class="el-dropdown-link">
                     <el-icon>
                         <arrow-down />
@@ -25,37 +27,23 @@
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>Action 1</el-dropdown-item>
-                        <el-dropdown-item>Action 2</el-dropdown-item>
-                        <el-dropdown-item>Action 3</el-dropdown-item>
-                        <el-dropdown-item disabled>Action 4</el-dropdown-item>
-                        <el-dropdown-item divided>Action 5</el-dropdown-item>
+                        <el-dropdown-item command="clearOther"
+                            >关闭其他</el-dropdown-item
+                        >
+                        <el-dropdown-item command="clearAll"
+                            >全部关闭</el-dropdown-item
+                        >
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
         </span>
     </div>
+    <div style="height: 44px"></div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-
-const route = useRoute();
-
-const activeTab = ref(route.path);
-const taList = ref([
-    {
-        title: "后台首页",
-        path: "/",
-    },
-    {
-        title: "商城管理",
-        path: "/goods/list",
-    },
-]);
-
-const removeTab = (targetName) => {};
+import { useTabList } from "~/composables/useTabList.js";
+const { activeTab, tabList, changeTab, removeTab, handleClose } = useTabList();
 </script>
 
 <style scoped>
@@ -71,6 +59,7 @@ const removeTab = (targetName) => {};
     height: 32px;
 }
 :deep(.el-tabs__header) {
+    border: 0 !important;
     @apply mb-0;
 }
 :deep(.el-tabs__nav) {

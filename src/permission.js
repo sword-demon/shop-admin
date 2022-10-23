@@ -5,6 +5,9 @@ import { getToken } from '~/composables/auth'
 import { toast, showFullLoading, hideFullLoading } from '~/composables/util'
 import store from './store'
 
+// 防止重复加载 getinfo
+let hasGetInfo = false
+
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
     // 显示loading
@@ -25,9 +28,10 @@ router.beforeEach(async (to, from, next) => {
     }
     let hasNewRoutes = false
     // 如果用户登录了就自动获取用户信息，并存储在vuex中
-    if (token) {
+    if (token && !hasGetInfo) {
         // 异步 resolve(res) 的res 进行解构出菜单
         let { menus } = await store.dispatch('getAdminUserInfo')
+        hasGetInfo = true
         // 动态添加路由
         hasNewRoutes = addRoutes(menus)
     }
