@@ -1,5 +1,5 @@
 <template>
-    <div>{{ d.num }}</div>
+    <div>{{ d.num.toFixed(2) }}</div>
 </template>
 <script setup>
 import { reactive, watch } from "vue";
@@ -16,9 +16,10 @@ const d = reactive({
     num: 0,
 });
 
+// 数字动态效果
 function AnimateToValue() {
     gsap.to(d, {
-        duration: 0.5,
+        duration: 0.5, // 0.5 秒
         num: props.value,
     });
 }
