@@ -18,7 +18,7 @@ export default defineConfig({
         proxy: {
             // 使用 /api 来代替下面的域名
             '/api': {
-                target: 'http://shop-admin.wjstar.top',
+                target: '',
                 changeOrigin: true,
                 rewrite: path => path.replace(/^\/api/, ''),
             },
