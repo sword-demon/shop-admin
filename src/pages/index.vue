@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-permission="['getStatistic1,GET']">
             <template v-if="panels.length == 0">
                 <el-col :span="6" v-for="i in 4" :key="i">
                     <el-skeleton style="width: 100%" animated loading>
@@ -82,9 +82,9 @@
 
         <el-row :gutter="20" class="mt-5">
             <el-col :span="12" :offset="0">
-                <IndexChart />
+                <IndexChart v-permission="['getStatistics3,GET']" />
             </el-col>
-            <el-col :span="12" :offset="0">
+            <el-col :span="12" :offset="0" v-permission="['getStatistic1,GET']">
                 <IndexCard
                     title="店铺及商品提示"
                     tip="店铺及商品提示"
@@ -112,7 +112,7 @@ import IndexCard from "~/components/IndexCard.vue";
 const panels = ref([]);
 getStatistics1().then((res) => {
     panels.value = res.panels;
-    console.log(panels.value);
+    // console.log(panels.value);
 });
 
 const order = ref([]);
