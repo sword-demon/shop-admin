@@ -25,3 +25,4 @@ dist-ssr
 .fleet
 .env
 .env.production
+.fleet
