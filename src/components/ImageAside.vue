@@ -8,12 +8,38 @@
                 >{{ item.name }}</AsideList
             >
         </div>
-        <div class="bottom">分页区域</div>
+        <div class="bottom">
+            <el-pagination
+                background
+                :total="total"
+                :current-page="currentPage"
+                :page-size="limit"
+                layout="prev, next"
+                @current-change="getData"
+            ></el-pagination>
+        </div>
     </el-aside>
+
+    <!-- 表单抽屉组件 -->
+    <FormDrawer ref="formDrawerRef" @submit="handleSubmit" title="新增">
+        <el-form :model="form" ref="formRef" :rules="rules">
+            <el-form-item label="分类名称" prop="name">
+                <el-input v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="分类排序" prop="order">
+                <el-input-number
+                    :min="0"
+                    :max="1000"
+                    v-model="form.order"
+                ></el-input-number>
+            </el-form-item>
+        </el-form>
+    </FormDrawer>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
+import FormDrawer from "./FormDrawer.vue";
 import AsideList from "./AsideList.vue";
 import { getImageClassList } from "~/api/image_class.js";
 
@@ -26,11 +52,21 @@ const list = ref([]);
 // 是否激活
 const activeId = ref(0);
 
+// 分页参数
+const currentPage = ref(1);
+const total = ref(0); // 总数
+const limit = ref(10); // 每页显示多少条
+
 // 获取数据
-function getData() {
+function getData(p = null) {
+    if (typeof p == "number") {
+        currentPage.value = p;
+    }
+    // console.log(p);
     loading.value = true;
-    getImageClassList(1)
+    getImageClassList(currentPage.value)
         .then((res) => {
+            total.value = res.totalCount; // 设置总数
             // console.log(res);
             list.value = res.list;
             // 默认选中第一个
@@ -45,6 +81,42 @@ function getData() {
 }
 
 getData();
+
+// 抽屉表单
+const formDrawerRef = ref(null);
+// 打开表单抽屉
+const handleCreate = () => formDrawerRef.value.open();
+
+const form = reactive({
+    name: "",
+    order: 50,
+});
+
+const rules = {
+    name: [
+        {
+            required: true,
+            message: "图库分类名称不能为空",
+            trigger: "blur",
+        },
+    ],
+};
+
+const formRef = ref(null);
+
+const handleSubmit = () => {
+    formRef.value.validate((valid) => {
+        if (!valid) {
+            return;
+        } else {
+            console.log("提交成功");
+        }
+    });
+};
+
+defineExpose({
+    handleCreate,
+});
 </script>
 
 <style scoped>
