@@ -41,7 +41,8 @@
 import { reactive, ref } from "vue";
 import FormDrawer from "./FormDrawer.vue";
 import AsideList from "./AsideList.vue";
-import { getImageClassList } from "~/api/image_class.js";
+import { getImageClassList, createImageClass } from "~/api/image_class.js";
+import { toast } from "~/composables/util.js";
 
 // 加载动画
 const loading = ref(false);
@@ -109,7 +110,17 @@ const handleSubmit = () => {
         if (!valid) {
             return;
         } else {
-            console.log("提交成功");
+            formDrawerRef.value.showLoading();
+            console.log(form);
+            createImageClass(form)
+                .then((res) => {
+                    toast("新增成功");
+                    getData(1);
+                    formDrawerRef.value.close();
+                })
+                .finally(() => {
+                    formDrawerRef.value.hideLoading();
+                });
         }
     });
 };
